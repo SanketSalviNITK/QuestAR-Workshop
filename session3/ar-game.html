@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuestAR - AR Session</title>
+    <script async src="https://unpkg.com/es-module-shims@1.7.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+        "mind-ar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+      }
+    }
+    </script>
+    <link rel="stylesheet" href="../session1/style.css">
+    <style>
+      #container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+      video { position: absolute; top: 0; left: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+        <!-- Game UI -->
+        <div class="status-bar">
+            <div class="score-pill">Gems: <span id="score">0</span></div>
+        </div>
+        
+        <div id="container"></div>
+
+        <div id="hint" class="hint-box" style="left: 50%; transform: translateX(-50%);">
+            <p>Scanning for Treasure...</p>
+        </div>
+    </div>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { MindARImageThree } from 'mind-ar-image-three';
+
+      const mindarThree = new MindARImageThree({
+        container: document.querySelector("#container"),
+        imageTargetSrc: "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/examples/image-tracking/assets/card-example/card.mind"
+      });
+
+      const {renderer, scene, camera} = mindarThree;
+
+      // Add Light
+      const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+      scene.add(light);
+
+      // Create Gem
+      const geometry = new THREE.OctahedronGeometry(0.2, 0);
+      const material = new THREE.MeshStandardMaterial({ color: 0x00f2ff, metalness: 0.8, roughness: 0.2 });
+      const gem = new THREE.Mesh(geometry, material);
+
+      // Create Anchor
+      const anchor = mindarThree.addAnchor(0);
+      anchor.group.add(gem);
+
+      let collected = false;
+      const scoreEl = document.getElementById('score');
+      const hintEl = document.querySelector('#hint p');
+
+      anchor.onTargetFound = () => {
+        console.log("Target Found!");
+        hintEl.innerText = "Treasure Detected! Stay still...";
+      };
+
+      anchor.onTargetLost = () => {
+        console.log("Target Lost");
+        hintEl.innerText = "Scanning for Treasure...";
+      };
+
+      const start = async() => {
+        await mindarThree.start();
+        renderer.setAnimationLoop(() => {
+          gem.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        });
+      };
+
+      start();
+
+      // Simple Collection Logic (Click the gem to collect)
+      window.addEventListener('click', (e) => {
+        // In a real game, you'd use raycasting to check if gem was clicked
+        // For this workshop, we'll just increment score if target is visible
+        if (anchor.visible && !collected) {
+            collected = true;
+            scoreEl.innerText = "1";
+            hintEl.innerText = "Gem Collected! Great job!";
+            gem.visible = false;
+        }
+      });
+    </script>
+  </body>
+</html>

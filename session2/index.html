@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuestAR - The Treasure Hunt</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Splash Screen -->
+        <section id="splash-screen" class="screen">
+            <div class="content">
+                <h1 class="glow-text">QuestAR</h1>
+                <p class="subtitle">Find the hidden gems in the real world.</p>
+                <button id="start-btn" class="glass-btn">START HUNT</button>
+            </div>
+            <div class="background-decor">
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+            </div>
+        </section>
+
+        <!-- Game UI (Hidden initially) -->
+        <section id="game-ui" class="screen hidden">
+            <div class="status-bar">
+                <div class="score-pill">Gems: <span id="score">0</span></div>
+                <button id="quit-btn" class="icon-btn">✕</button>
+            </div>
+            <div class="hint-box glass">
+                <p>Scan a marker to find a treasure!</p>
+            </div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

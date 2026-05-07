@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Basics - QuestAR</title>
+    <style>
+        body { margin: 0; background: #0f172a; overflow: hidden; }
+        #container { width: 100vw; height: 100vh; }
+        .label {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: sans-serif;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="label">Session 2: Three.js 3D Gem</div>
+    <div id="container"></div>
+
+    <!-- Import Three.js via CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // 1. Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('container').appendChild(renderer.domElement);
+
+        // 2. Create the "Gem" (Octahedron)
+        const geometry = new THREE.OctahedronGeometry(1, 0);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x00f2ff, 
+            metalness: 0.9, 
+            roughness: 0.1,
+            emissive: 0x004444
+        });
+        const gem = new THREE.Mesh(geometry, material);
+        scene.add(gem);
+
+        // 3. Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 20);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        camera.position.z = 5;
+
+        // 4. Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            gem.rotation.y += 0.01;
+            gem.rotation.x += 0.005;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
