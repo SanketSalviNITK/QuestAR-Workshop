@@ -21,7 +21,13 @@ You will need active accounts for the following services (please link them if po
 ---
 
 ## 3. 🖥️ Terminal Configuration
-Open your terminal in VS Code (`Ctrl + `) and run these commands to set up your Git identity:
+If you don't have Git installed yet, run this command in your terminal first:
+```powershell
+winget install --id Git.Git -e --source winget
+```
+*Note: Restart VS Code after the installation finishes.*
+
+Once Git is installed, run these commands to set up your identity:
 
 ```bash
 # 1. Verify Git is installed
