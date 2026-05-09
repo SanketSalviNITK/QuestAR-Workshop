@@ -9,6 +9,8 @@ Welcome to the QuestAR workshop! This folder contains all the materials, starter
 ## 📁 Directory Structure
 - [**syllabus.md**](syllabus.md): The full course outline and schedule.
 - [**prompts-guide.md**](prompts-guide.md): A collection of AI prompts to help you complete the assignments.
+- [**troubleshooting.md**](troubleshooting.md): **Essential!** Solutions for common camera, AR, and hosting issues.
+- [**assets/**](assets/): Pre-made markers and icons for your projects.
 - **Presentations**:
     - [**Session 1: Your Digital Identity**](session1/Session1_Your_Digital_Identity.pptx) ([**Teaching Notes**](session1/teaching-notes.md))
     - [**Session 2: Entering the 3D World**](session2/Session2_Entering_the_3D_World.pptx) ([**Teaching Notes**](session2/teaching-notes.md))

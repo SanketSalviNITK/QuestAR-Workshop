@@ -1,11 +1,11 @@
 :root {
-    --primary: #6366f1;
-    --secondary: #a855f7;
-    --accent: #ec4899;
-    --bg-dark: #0f172a;
+    --primary: #06b6d4;      /* ARTHunt Cyan */
+    --secondary: #d946ef;    /* ARTHunt Pink */
+    --accent: #10b981;       /* Emerald Accent */
+    --bg-dark: #050508;      /* Deep Space Black */
     --text-light: #f8fafc;
-    --glass: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -15,7 +15,7 @@
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     background: var(--bg-dark);
     color: var(--text-light);
     height: 100vh;

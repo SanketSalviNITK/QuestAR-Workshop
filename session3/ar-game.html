@@ -1,97 +1,99 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuestAR - AR Session</title>
-    <script async src="https://unpkg.com/es-module-shims@1.7.3/dist/es-module-shims.js"></script>
-    <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-        "mind-ar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
-      }
-    }
-    </script>
-    <link rel="stylesheet" href="../session1/style.css">
+    <title>QuestAR - Custom Marker</title>
+    
+    <!-- Robust A-Frame + MindAR Bundle -->
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
+    <link rel="stylesheet" href="../session2/style.css">
     <style>
-      #container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
-      video { position: absolute; top: 0; left: 0; }
+        body { margin: 0; overflow: hidden; background: #050508; font-family: 'Inter', sans-serif; }
+        
+        #ui-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        #ui-layer * { pointer-events: auto; }
+
+        /* Ensure the AR canvas doesn't cover our UI */
+        .a-canvas {
+            z-index: 0;
+        }
     </style>
-  </head>
-  <body>
-    <div id="app">
-        <!-- Game UI -->
+</head>
+<body>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer">
         <div class="status-bar">
             <div class="score-pill">Gems: <span id="score">0</span></div>
         </div>
-        
-        <div id="container"></div>
 
-        <div id="hint" class="hint-box" style="left: 50%; transform: translateX(-50%);">
-            <p>Scanning for Treasure...</p>
+        <div id="hint" class="hint-box" style="align-self: center; margin-bottom: 20px;">
+            <p>Scan your custom logo to find the treasure!</p>
         </div>
     </div>
 
-    <script type="module">
-      import * as THREE from 'three';
-      import { MindARImageThree } from 'mind-ar-image-three';
+    <!-- AR Scene -->
+    <a-scene 
+        mindar-image="imageTargetSrc: ../assets/targets.mind; autoStart: true; uiLoading: no; uiError: no; uiScanning: no;" 
+        embedded 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
+        
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      const mindarThree = new MindARImageThree({
-        container: document.querySelector("#container"),
-        imageTargetSrc: "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/examples/image-tracking/assets/card-example/card.mind"
-      });
+        <!-- The Custom Marker Anchor -->
+        <a-entity mindar-image-target="targetIndex: 0" id="gem-anchor">
+            <!-- The 3D Gem -->
+            <a-octahedron 
+                id="gem"
+                position="0 0 0" 
+                radius="0.3"
+                material="color: #00f2ff; metalness: 0.8; roughness: 0.2; emissive: #003333;"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear">
+            </a-octahedron>
+        </a-entity>
+    </a-scene>
 
-      const {renderer, scene, camera} = mindarThree;
+    <script>
+        let collected = false;
+        const scoreEl = document.getElementById('score');
+        const hintEl = document.querySelector('#hint p');
+        const gem = document.getElementById('gem');
+        const anchor = document.getElementById('gem-anchor');
 
-      // Add Light
-      const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-      scene.add(light);
-
-      // Create Gem
-      const geometry = new THREE.OctahedronGeometry(0.2, 0);
-      const material = new THREE.MeshStandardMaterial({ color: 0x00f2ff, metalness: 0.8, roughness: 0.2 });
-      const gem = new THREE.Mesh(geometry, material);
-
-      // Create Anchor
-      const anchor = mindarThree.addAnchor(0);
-      anchor.group.add(gem);
-
-      let collected = false;
-      const scoreEl = document.getElementById('score');
-      const hintEl = document.querySelector('#hint p');
-
-      anchor.onTargetFound = () => {
-        console.log("Target Found!");
-        hintEl.innerText = "Treasure Detected! Stay still...";
-      };
-
-      anchor.onTargetLost = () => {
-        console.log("Target Lost");
-        hintEl.innerText = "Scanning for Treasure...";
-      };
-
-      const start = async() => {
-        await mindarThree.start();
-        renderer.setAnimationLoop(() => {
-          gem.rotation.y += 0.01;
-          renderer.render(scene, camera);
+        // Interaction Logic
+        window.addEventListener('click', () => {
+            // A-Frame check for visibility
+            if (anchor.getAttribute('visible') === true && !collected) {
+                collected = true;
+                scoreEl.innerText = "1";
+                hintEl.innerText = "Gem Collected! Great job!";
+                gem.setAttribute('visible', 'false');
+                console.log("Gem Collected!");
+            }
         });
-      };
 
-      start();
+        // Event Listeners for feedback
+        anchor.addEventListener("targetFound", event => {
+            if (!collected) hintEl.innerText = "Logo Detected! Tap to collect!";
+        });
 
-      // Simple Collection Logic (Click the gem to collect)
-      window.addEventListener('click', (e) => {
-        // In a real game, you'd use raycasting to check if gem was clicked
-        // For this workshop, we'll just increment score if target is visible
-        if (anchor.visible && !collected) {
-            collected = true;
-            scoreEl.innerText = "1";
-            hintEl.innerText = "Gem Collected! Great job!";
-            gem.visible = false;
-        }
-      });
+        anchor.addEventListener("targetLost", event => {
+            if (!collected) hintEl.innerText = "Scan your custom logo...";
+        });
     </script>
-  </body>
+</body>
 </html>

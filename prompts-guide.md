@@ -38,6 +38,12 @@ This guide contains detailed prompts you can use with AI coding assistants (like
 ### Prompt 2: Collection Logic
 > "Add a simple game mechanic to my AR code: when the user clicks anywhere on the screen while the AR target is visible, increment a score counter in the UI, show a 'Collected!' message in the hint box, and hide the 3D gem."
 
+### 🌟 Master Prompt: The QuestAR Elite
+> "Build a robust AR Treasure Hunt experience using A-Frame and the Mind.AR A-Frame bundle. The design should follow a premium 'ARTHunt' aesthetic: 
+> 1. **UI**: A dark glassmorphism top-bar with a 'Gems: 0' counter and a bottom hint-box using the 'Inter' font and Cyan (#06b6d4) accents.
+> 2. **AR Logic**: Use a custom image tracking file ('assets/targets.mind'). When the logo is detected, show a spinning metallic cyan octahedron gem.
+> 3. **Interactivity**: When the user taps the screen while the logo is in view, increment the score, update the hint to 'Gem Collected!', and hide the gem. Ensure the camera feed fills the screen and doesn't hide the UI."
+
 ---
 
 ## 🚀 Session 4: The Creator's Lab (Remixing)
